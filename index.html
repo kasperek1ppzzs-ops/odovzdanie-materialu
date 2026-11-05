@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1e40af">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Odovzdanie materiálu">
+  <title>Odovzdanie materiálu (KAPZ)</title>
+  
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --danger: #dc2626;
+      --radius: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+      padding-bottom: 90px; /* Space for sticky bottom bar on mobile */
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* TOP APP BAR */
+    .app-bar {
+      background: #1e3a8a;
+      color: white;
+      padding: 14px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-title {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .app-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* CARD STYLING */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ACCORDION METADATA */
+    .details-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .form-input {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+    }
+
+    /* STATS DASHBOARD */
+    .stats-widget {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .stats-flex {
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+
+    .stat-box {
+      flex: 1;
+    }
+
+    .stat-val {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: #bfdbfe;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .progress-bar-wrap {
+      background: rgba(255,255,255,0.2);
+      border-radius: 999px;
+      height: 8px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background: #22c55e;
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 999px;
+    }
+
+    /* CONTROLS & SEARCH BAR */
+    .sticky-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .filters-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .filters-scroll::-webkit-scrollbar { display: none; }
+
+    .filter-chip {
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #475569;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .filter-chip.active {
+      background: #1e40af;
+      color: white;
+      border-color: #1e40af;
+    }
+
+    /* PERSON MOBILE CARD */
+    .person-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .person-card:active {
+      transform: scale(0.99);
+      background-color: #f1f5f9;
+    }
+
+    .person-card.checked {
+      background-color: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    /* CHECKBOX BUTTON */
+    .check-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 2px solid #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: #fff;
+      transition: all 0.2s ease;
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .person-card.checked .check-btn {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .person-card.checked .check-btn::after {
+      content: '✓';
+    }
+
+    .person-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .person-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-right: 4px;
+    }
+
+    .person-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .person-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 3px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-status.done {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .badge-status.pending {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    .person-note-row {
+      margin-top: 6px;
+      width: 100%;
+    }
+
+    .card-note-input {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 12px;
+      background: #fff;
+    }
+
+    /* STICKY BOTTOM BAR */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 99;
+      box-shadow: 0 -3px 12px rgba(0,0,0,0.08);
+    }
+
+    .bottom-summary {
+      font-size: 13px;
+    }
+
+    .bottom-summary strong {
+      font-size: 16px;
+      color: #1e3a8a;
+    }
+
+    .btn-main-action {
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 3px 8px rgba(22, 163, 74, 0.3);
+    }
+
+    .btn-main-action:active {
+      background: #15803d;
+      transform: scale(0.98);
+    }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 480px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-modal {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text);
+    }
+
+    .btn-modal.primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .btn-modal.success {
+      background: var(--success);
+      color: white;
+      border-color: var(--success);
+    }
+
+    /* PRINT LAYOUT - EXACT A4 PROTOCOL */
+    @media print {
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        color: #000 !important;
+        font-size: 10pt !important;
+      }
+
+      .app-bar, .sticky-controls, .stats-widget, .bottom-bar, .modal-overlay, .details-toggle, .no-print {
+        display: none !important;
+      }
+
+      .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+
+      .card {
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+      }
+
+      .print-header {
+        display: block !important;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+      }
+
+      .print-header h1 {
+        font-size: 16pt;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .print-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 8px;
+        margin-bottom: 12px;
+        font-size: 9pt;
+      }
+
+      .print-table {
+        display: table !important;
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 9pt;
+      }
+
+      .print-table th, .print-table td {
+        border: 1px solid #000;
+        padding: 5px 6px;
+      }
+
+      .print-table th {
+        background: #f1f5f9;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 8pt;
+      }
+
+      .person-card {
+        display: none !important;
+      }
+
+      .print-footer {
+        display: block !important;
+        margin-top: 30px;
+        page-break-inside: avoid;
+      }
+
+      .sig-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        text-align: center;
+      }
+
+      .sig-line {
+        margin-top: 40px;
+        border-bottom: 1px solid #000;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 12mm 10mm;
+      }
+    }
+
+    .print-header, .print-table, .print-footer {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP APP BAR -->
+  <div class="app-bar no-print">
+    <div class="app-title">
+      <span>📦</span>
+      <span>Odovzdanie materiálu</span>
+    </div>
+    <div class="app-actions">
+      <button class="icon-btn" onclick="openShareModal()">
+        <span>📤</span> <span>Zdieľať</span>
+      </button>
+      <button class="icon-btn" onclick="openQrModal()">
+        <span>📱</span> <span>QR</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- PRINT-ONLY HEADER -->
+    <div class="print-header">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h1>PROTOKOL O ODOVZDANÍ A PREVZATÍ MATERIÁLU</h1>
+          <p style="font-size: 10pt; color: #475569;">Evidenčný zoznam koordinátorov asistentov podpory zdravia (KAPZ)</p>
+        </div>
+        <div style="border: 1px solid #000; padding: 4px 8px; font-weight: 700; font-size: 9pt;">
+          OFICIÁLNY DOKUMENT
+        </div>
+      </div>
+      <div class="print-meta-grid" style="margin-top: 8px;">
+        <div><strong>Materiál:</strong> <span id="prnMat"></span></div>
+        <div><strong>Dátum:</strong> <span id="prnDate"></span></div>
+        <div><strong>Miesto:</strong> <span id="prnPlace"></span></div>
+        <div><strong>Odovzdal:</strong> <span id="prnSender"></span></div>
+      </div>
+    </div>
+
+    <!-- METADATA ACCORDION (SCREEN ONLY) -->
+    <div class="card no-print">
+      <div class="details-toggle" onclick="toggleDetails()">
+        <span>⚙️ Podrobnosti o materiáli a mieste</span>
+        <span id="accordionArrow">▼</span>
+      </div>
+      <div id="metaGrid" class="form-grid" style="display: none;">
+        <div class="form-group full-width">
+          <label class="form-label">Názov odovzdávaného materiálu</label>
+          <input type="text" id="matName" class="form-input" value="Materiál pre koordinátorov podpory zdravia">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dátum</label>
+          <input type="date" id="docDate" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Miesto</label>
+          <input type="text" id="docPlace" class="form-input" value="Košice / Terén">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Odovzdal</label>
+          <input type="text" id="docSender" class="form-input" value="Peter Kašperek">
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS DASHBOARD -->
+    <div class="stats-widget no-print">
+      <div class="stats-flex">
+        <div class="stat-box">
+          <div class="stat-val" id="statTotal">33</div>
+          <div class="stat-lbl">Spolu</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" style="color: #4ade80;" id="statDone">0</div>
+          <div class="stat-lbl">Odovzdané</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" style="color: #fca5a5;" id="statPending">33</div>
+          <div class="stat-lbl">Zostáva</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="statPct">0%</div>
+          <div class="stat-lbl">Hotovo</div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="statProgress"></div>
+      </div>
+    </div>
+
+    <!-- STICKY CONTROLS (SEARCH & FILTERS) -->
+    <div class="sticky-controls no-print">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Hľadať meno koordinátora..." oninput="render()">
+      </div>
+
+      <div class="filters-scroll">
+        <button class="filter-chip active" id="chipAll" onclick="setFilter('all')">Všetci (33)</button>
+        <button class="filter-chip" id="chipDone" onclick="setFilter('done')">✓ Odovzdané (<span id="chipDoneCount">0</span>)</button>
+        <button class="filter-chip" id="chipPending" onclick="setFilter('pending')">✕ Neodovzdané (<span id="chipPendingCount">33</span>)</button>
+        <button class="filter-chip" onclick="toggleSort()">🔤 Zoradiť: <span id="sortTxt">Abeceda</span></button>
+        <button class="filter-chip" onclick="checkAll(true)">Označiť všetkých</button>
+        <button class="filter-chip" onclick="checkAll(false)">Zrušiť všetkých</button>
+      </div>
+    </div>
+
+    <!-- MOBILE CARDS LIST -->
+    <div id="cardsList">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- PRINT-ONLY TABLE -->
+    <table class="print-table" id="printTable">
+      <thead>
+        <tr>
+          <th style="width: 35px; text-align: center;">P.č.</th>
+          <th>Meno a priezvisko koordinátora</th>
+          <th style="width: 130px; text-align: center;">Dátum / Čas prevzatia</th>
+          <th style="width: 90px; text-align: center;">Status</th>
+          <th style="width: 170px;">Poznámka / Vlastnoručný podpis</th>
+        </tr>
+      </thead>
+      <tbody id="printTableBody">
+        <!-- Populated by JS for printing -->
+      </tbody>
+    </table>
+
+    <!-- PRINT-ONLY FOOTER -->
+    <div class="print-footer">
+      <div class="sig-grid">
+        <div>
+          <strong>Materiál odovzdal:</strong>
+          <p id="prnSenderSig" style="margin-top: 5px;">Peter Kašperek</p>
+          <div class="sig-line"></div>
+          <small style="color: #64748b;">dátum a podpis</small>
+        </div>
+        <div>
+          <strong>Prevzatie skontroloval:</strong>
+          <p style="margin-top: 5px;">Osoba poverená kontrolou</p>
+          <div class="sig-line"></div>
+          <small style="color: #64748b;">dátum a podpis</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STICKY BOTTOM BAR -->
+  <div class="bottom-bar no-print">
+    <div class="bottom-summary">
+      <div>Stav odovzdania:</div>
+      <strong><span id="bottomDone">0</span> / 33</strong> (<span id="bottomPct">0%</span>)
+    </div>
+    <button class="btn-main-action" onclick="openPdfModal()">
+      <span>📄</span> <span>Generovať PDF</span>
+    </button>
+  </div>
+
+  <!-- MODAL: PDF GENERATION OPTIONS -->
+  <div class="modal-overlay" id="pdfModal">
+    <div class="modal-box">
+      <div class="modal-title">🖨️ Generovať PDF / Protokol</div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">
+        Zvoľte, aký typ protokolu chcete vytlačiť alebo uložiť do PDF vo vašom mobile:
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+          <input type="radio" name="pdfPrintType" value="all" checked> 
+          <strong>Všetky osoby (33)</strong> - kompletná evidencia so statusom
+        </label>
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+          <input type="radio" name="pdfPrintType" value="checked_only"> 
+          <strong>Iba odovzdané osoby</strong> - zoznam reálne prevzatých
+        </label>
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+          <input type="radio" name="pdfPrintType" value="blank"> 
+          <strong>Čistá preberacia listina</strong> - riadky na vlastnoručný podpis
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal success" onclick="triggerPrint()">
+          <span>🖨️</span> <span>Uložiť ako PDF / Vytlačiť</span>
+        </button>
+        <button class="btn-modal" onclick="closeModal('pdfModal')">Zavrieť</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SHARE OPTIONS -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal-box">
+      <div class="modal-title">📤 Zdieľať správu o odovzdaní</div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">
+        Môžete poslať aktuálny súhrn cez WhatsApp, SMS, e-mail alebo ho skopírovať:
+      </p>
+
+      <textarea id="shareTextPreview" style="width: 100%; height: 120px; font-size: 12px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; font-family: monospace;"></textarea>
+
+      <div class="modal-actions">
+        <button class="btn-modal primary" onclick="sendNativeShare()">
+          <span>📲</span> <span>Zdieľať (WhatsApp / E-mail / Správa)</span>
+        </button>
+        <button class="btn-modal" onclick="copyShareText()">
+          <span>📋</span> <span>Kopírovať do schránky</span>
+        </button>
+        <button class="btn-modal" onclick="closeModal('shareModal')">Zavrieť</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: QR CODE TO OPEN ON MOBILE -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-box" style="text-align: center;">
+      <div class="modal-title">📱 Otvoriť v mobile</div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">
+        Ak ste na rovnakej Wi-Fi sieti s počítačom, naskenujte tento QR kód fotoaparátom mobilu:
+      </p>
+
+      <div id="qrCodeContainer" style="margin: 16px auto; display: inline-block; padding: 10px; background: #fff; border: 1px solid #cbd5e1; border-radius: 12px;">
+        <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://10.10.10.51:8080" alt="QR kód" style="width: 180px; height: 180px; display: block;" onerror="this.onerror=null; this.src=''; this.alt='Adresa: http://10.10.10.51:8080';">
+      </div>
+
+      <div style="font-size: 13px; font-weight: 700; color: #1e40af; margin-bottom: 8px;">
+        http://10.10.10.51:8080
+      </div>
+
+      <p style="font-size: 12px; color: #64748b; line-height: 1.4;">
+        Tip: V mobilnom prehliadači Chrome kliknite na <strong>Tri bodky (⋮) → Pridať na plochu</strong> pre spustenie v plnoobrazovkovom režime ako aplikácia.
+      </p>
+
+      <div class="modal-actions" style="margin-top: 16px;">
+        <button class="btn-modal" onclick="closeModal('qrModal')">Zavrieť</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const INITIAL_PEOPLE = [
+      { id: 1, name: "Adam Milan, Bc.", checked: false, time: "", note: "" },
+      { id: 2, name: "Gunár Rastislav, Bc.", checked: false, time: "", note: "" },
+      { id: 3, name: "Szalai Sabína, Bc.", checked: false, time: "", note: "" },
+      { id: 4, name: "Benčiková Veronika, PhDr. Bc.", checked: false, time: "", note: "" },
+      { id: 5, name: "Bužová Lenka, Mgr.", checked: false, time: "", note: "" },
+      { id: 6, name: "Čuláková Eva, Mgr.", checked: false, time: "", note: "" },
+      { id: 7, name: "Dunková Anna, Mgr.", checked: false, time: "", note: "" },
+      { id: 8, name: "Guzi Stanislava, Mgr.", checked: false, time: "", note: "" },
+      { id: 9, name: "Holubová Mariana, Mgr.", checked: false, time: "", note: "" },
+      { id: 10, name: "Puškášová Eva, Mgr.", checked: false, time: "", note: "" },
+      { id: 11, name: "Oláh Július, Bc.", checked: false, time: "", note: "" },
+      { id: 12, name: "Miľo Eugen, Bc.", checked: false, time: "", note: "" },
+      { id: 13, name: "Molek Peter, Mgr.", checked: false, time: "", note: "" },
+      { id: 14, name: "Vrlíková Ivana, Bc.", checked: false, time: "", note: "" },
+      { id: 15, name: "Dunková Mária, Mgr.", checked: false, time: "", note: "" },
+      { id: 16, name: "Horevajová Lucia, Mgr.", checked: false, time: "", note: "" },
+      { id: 17, name: "Gáborová Mária, Mgr.", checked: false, time: "", note: "" },
+      { id: 18, name: "Vertaľová Marcela, Mgr.", checked: false, time: "", note: "" },
+      { id: 19, name: "Gažiková Radomíra, Bc.", checked: false, time: "", note: "" },
+      { id: 20, name: "Gora Bartolomej, Mgr.", checked: false, time: "", note: "" },
+      { id: 21, name: "Tolnaiová Jana, Mgr.", checked: false, time: "", note: "" },
+      { id: 22, name: "Tolnaiová Monika, Mgr.", checked: false, time: "", note: "" },
+      { id: 23, name: "Turták František, Mgr.", checked: false, time: "", note: "" },
+      { id: 24, name: "Pechová Kristína, Bc.", checked: false, time: "", note: "" },
+      { id: 25, name: "Sivák Jozef, Bc.", checked: false, time: "", note: "" },
+      { id: 26, name: "Pagáč Eduard, Mgr.", checked: false, time: "", note: "" },
+      { id: 27, name: "Drabiščaková Miroslava, Mgr.", checked: false, time: "", note: "" },
+      { id: 28, name: "Tomko Peter, Bc.", checked: false, time: "", note: "" },
+      { id: 29, name: "Demeter František, Mgr.", checked: false, time: "", note: "" },
+      { id: 30, name: "Gladišová Linda, Mgr., DiS", checked: false, time: "", note: "" },
+      { id: 31, name: "Dobiášová Elena, Mgr.", checked: false, time: "", note: "" },
+      { id: 32, name: "Fabóová Marcela, Bc.", checked: false, time: "", note: "" },
+      { id: 33, name: "Batler Dávid, Mgr.", checked: false, time: "", note: "" }
+    ];
+
+    let people = [];
+    let currentFilter = 'all';
+    let sortMode = 'alphabetical'; // 'alphabetical' or 'original'
+
+    function loadData() {
+      const saved = localStorage.getItem('odovzdanie_kapz_v2');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          people = parsed.people || INITIAL_PEOPLE;
+          if (parsed.meta) {
+            if (parsed.meta.matName) document.getElementById('matName').value = parsed.meta.matName;
+            if (parsed.meta.docDate) document.getElementById('docDate').value = parsed.meta.docDate;
+            if (parsed.meta.docPlace) document.getElementById('docPlace').value = parsed.meta.docPlace;
+            if (parsed.meta.docSender) document.getElementById('docSender').value = parsed.meta.docSender;
+          }
+        } catch(e) {
+          people = JSON.parse(JSON.stringify(INITIAL_PEOPLE));
+        }
+      } else {
+        people = JSON.parse(JSON.stringify(INITIAL_PEOPLE));
+      }
+
+      if (!document.getElementById('docDate').value) {
+        document.getElementById('docDate').value = new Date().toISOString().split('T')[0];
+      }
+    }
+
+    function saveData() {
+      const meta = {
+        matName: document.getElementById('matName').value,
+        docDate: document.getElementById('docDate').value,
+        docPlace: document.getElementById('docPlace').value,
+        docSender: document.getElementById('docSender').value
+      };
+      localStorage.setItem('odovzdanie_kapz_v2', JSON.stringify({ people, meta }));
+      updateStats();
+    }
+
+    function toggleDetails() {
+      const grid = document.getElementById('metaGrid');
+      const arrow = document.getElementById('accordionArrow');
+      const isHidden = grid.style.display === 'none';
+      grid.style.display = isHidden ? 'grid' : 'none';
+      arrow.textContent = isHidden ? '▲' : '▼';
+    }
+
+    function togglePerson(id, event) {
+      if (event && event.target.tagName === 'INPUT') return; // Don't trigger if typing in note
+      
+      // Haptic feedback for mobile touch
+      if (navigator.vibrate) {
+        navigator.vibrate(35);
+      }
+
+      const p = people.find(item => item.id === id);
+      if (!p) return;
+
+      p.checked = !p.checked;
+      if (p.checked) {
+        const d = new Date();
+        const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        const dateStr = document.getElementById('docDate').value || d.toISOString().split('T')[0];
+        p.time = `${dateStr} ${timeStr}`;
+        if (!p.note) p.note = "Prevzaté osobne";
+      } else {
+        p.time = "";
+        if (p.note === "Prevzaté osobne") p.note = "";
+      }
+
+      saveData();
+      render();
+    }
+
+    function updateNote(id, val) {
+      const p = people.find(item => item.id === id);
+      if (p) {
+        p.note = val;
+        saveData();
+      }
+    }
+
+    function checkAll(status) {
+      const d = new Date();
+      const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+      const dateStr = document.getElementById('docDate').value || d.toISOString().split('T')[0];
+
+      people.forEach(p => {
+        p.checked = status;
+        if (status) {
+          if (!p.time) p.time = `${dateStr} ${timeStr}`;
+          if (!p.note) p.note = "Prevzaté osobne";
+        } else {
+          p.time = "";
+          if (p.note === "Prevzaté osobne") p.note = "";
+        }
+      });
+      saveData();
+      render();
+    }
+
+    function toggleSort() {
+      sortMode = sortMode === 'alphabetical' ? 'original' : 'alphabetical';
+      document.getElementById('sortTxt').textContent = sortMode === 'alphabetical' ? 'Abeceda' : 'Pôvodné';
+      render();
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.getElementById('chipAll').classList.toggle('active', filter === 'all');
+      document.getElementById('chipDone').classList.toggle('active', filter === 'done');
+      document.getElementById('chipPending').classList.toggle('active', filter === 'pending');
+      render();
+    }
+
+    function getList() {
+      let list = [...people];
+      if (sortMode === 'alphabetical') {
+        list.sort((a, b) => a.name.localeCompare(b.name, 'sk'));
+      } else {
+        list.sort((a, b) => a.id - b.id);
+      }
+
+      if (currentFilter === 'done') list = list.filter(p => p.checked);
+      if (currentFilter === 'pending') list = list.filter(p => !p.checked);
+
+      const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      if (q) {
+        list = list.filter(p => p.name.toLowerCase().includes(q) || (p.note && p.note.toLowerCase().includes(q)));
+      }
+      return list;
+    }
+
+    function updateStats() {
+      const total = people.length;
+      const done = people.filter(p => p.checked).length;
+      const pending = total - done;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statDone').textContent = done;
+      document.getElementById('statPending').textContent = pending;
+      document.getElementById('statPct').textContent = `${pct}%`;
+      document.getElementById('statProgress').style.width = `${pct}%`;
+
+      document.getElementById('chipDoneCount').textContent = done;
+      document.getElementById('chipPendingCount').textContent = pending;
+
+      document.getElementById('bottomDone').textContent = done;
+      document.getElementById('bottomPct').textContent = `${pct}%`;
+
+      // Sync print header fields
+      document.getElementById('prnMat').textContent = document.getElementById('matName').value;
+      document.getElementById('prnDate').textContent = document.getElementById('docDate').value;
+      document.getElementById('prnPlace').textContent = document.getElementById('docPlace').value;
+      document.getElementById('prnSender').textContent = document.getElementById('docSender').value;
+      document.getElementById('prnSenderSig').textContent = document.getElementById('docSender').value;
+    }
+
+    function render() {
+      const container = document.getElementById('cardsList');
+      const printTbody = document.getElementById('printTableBody');
+      const list = getList();
+
+      container.innerHTML = '';
+      printTbody.innerHTML = '';
+
+      list.forEach((p, index) => {
+        // Mobile Card Element
+        const card = document.createElement('div');
+        card.className = `person-card ${p.checked ? 'checked' : ''}`;
+        card.onclick = (e) => togglePerson(p.id, e);
+
+        card.innerHTML = `
+          <div class="check-btn"></div>
+          <div class="person-info">
+            <div class="person-name">
+              <span class="person-num">${index + 1}.</span>${p.name}
+            </div>
+            <div class="person-meta-row">
+              <span class="badge-status ${p.checked ? 'done' : 'pending'}">
+                ${p.checked ? '✓ ODOVZDANÉ' : 'NEODOVZDANÉ'}
+              </span>
+              <span>${p.checked && p.time ? p.time : 'Čaká na prevzatie'}</span>
+            </div>
+            <div class="person-note-row" onclick="event.stopPropagation()">
+              <input type="text" class="card-note-input" 
+                     placeholder="Poznámka / podpis..." 
+                     value="${p.note || ''}" 
+                     onchange="updateNote(${p.id}, this.value)">
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Prepare Print Table Rows
+      const printMode = document.querySelector('input[name="pdfPrintType"]:checked')?.value || 'all';
+      let printList = [...people];
+      if (sortMode === 'alphabetical') printList.sort((a,b) => a.name.localeCompare(b.name, 'sk'));
+
+      if (printMode === 'checked_only') {
+        printList = printList.filter(p => p.checked);
+      }
+
+      printList.forEach((p, idx) => {
+        const isBlank = (printMode === 'blank');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="text-align: center; font-weight: bold;">${idx + 1}.</td>
+          <td><strong>${p.name}</strong><br><small style="color: #64748b;">KAPZ</small></td>
+          <td style="text-align: center;">${isBlank ? '' : (p.time || '-')}</td>
+          <td style="text-align: center; font-weight: bold;">
+            ${isBlank ? 'NA PODPIS' : (p.checked ? 'PREVZATÉ' : 'NEPREVZATÉ')}
+          </td>
+          <td>${isBlank ? 'Podpis: .........................' : (p.note || '')}</td>
+        `;
+        printTbody.appendChild(tr);
+      });
+
+      updateStats();
+    }
+
+    // Modal Helpers
+    function openPdfModal() {
+      document.getElementById('pdfModal').classList.add('active');
+    }
+    function openQrModal() {
+      document.getElementById('qrModal').classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function triggerPrint() {
+      closeModal('pdfModal');
+      saveData();
+      render();
+      setTimeout(() => {
+        window.print();
+      }, 200);
+    }
+
+    function openShareModal() {
+      const mat = document.getElementById('matName').value;
+      const done = people.filter(p => p.checked).length;
+      const total = people.length;
+      const date = document.getElementById('docDate').value;
+
+      let msg = `📋 PROTOKOL ODOVZDANIA MATERIÁLU\n`;
+      msg += `Materiál: ${mat}\n`;
+      msg += `Dátum: ${date}\n`;
+      msg += `Stav: ${done} z ${total} odovzdané (${Math.round(done/total*100)}%)\n\n`;
+
+      const donePeople = people.filter(p => p.checked);
+      if (donePeople.length > 0) {
+        msg += `Prevzali:\n`;
+        donePeople.forEach((p, i) => {
+          msg += `${i+1}. ${p.name} (${p.time || 'prevzaté'})\n`;
+        });
+      }
+
+      const pendingPeople = people.filter(p => !p.checked);
+      if (pendingPeople.length > 0) {
+        msg += `\nZostáva odovzdať (${pendingPeople.length}):\n`;
+        pendingPeople.forEach((p, i) => {
+          msg += `- ${p.name}\n`;
+        });
+      }
+
+      document.getElementById('shareTextPreview').value = msg;
+      document.getElementById('shareModal').classList.add('active');
+    }
+
+    async function sendNativeShare() {
+      const text = document.getElementById('shareTextPreview').value;
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Odovzdanie materiálu KAPZ',
+            text: text
+          });
+        } catch(err) {
+          // user cancelled
+        }
+      } else {
+        copyShareText();
+      }
+    }
+
+    function copyShareText() {
+      const text = document.getElementById('shareTextPreview').value;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✓ Text bol skopírovaný do schránky! Môžete ho vložiť do WhatsAppu alebo SMS.');
+      });
+    }
+
+    // Input listeners
+    ['matName', 'docDate', 'docPlace', 'docSender'].forEach(id => {
+      document.getElementById(id).addEventListener('input', saveData);
+    });
+
+    document.querySelectorAll('input[name="pdfPrintType"]').forEach(radio => {
+      radio.addEventListener('change', render);
+    });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      render();
+    });
+  </script>
+</body>
+</html>
